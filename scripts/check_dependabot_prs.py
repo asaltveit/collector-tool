@@ -126,7 +126,7 @@ def generate_email_body(repo_data: Dict[str, Dict[str, Any]]) -> str:
     <head>
         <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
-            h2 { color: #0366d6; }
+            h2 { color: #24292e; }
             h3 { color: #24292e; margin-top: 25px; }
             h4 { color: #586069; margin-top: 15px; margin-bottom: 10px; }
             .repo-section { margin-bottom: 30px; border: 1px solid #e1e4e8; padding: 15px; border-radius: 6px; }
@@ -175,7 +175,7 @@ def generate_email_body(repo_data: Dict[str, Dict[str, Any]]) -> str:
         </style>
     </head>
     <body>
-        <h2>🔒 Dependabot Weekly Report</h2>
+        <h2>Dependabot Weekly Report</h2>
     """
     
     total_alerts = 0
