@@ -50,6 +50,7 @@ def parse_version_change(pr_title: str) -> str:
     
     return "Unknown"
 
+# TODO: didn't receive the alert for map, just PR
 def get_dependabot_alerts(repo_full_name: str, github_client: Github) -> List[Dict[str, Any]]:
     """Get all open Dependabot security alerts for a repository."""
     try:
