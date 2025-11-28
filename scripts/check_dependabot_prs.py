@@ -77,13 +77,13 @@ def get_dependabot_alerts(repo_full_name: str, github_client: Github) -> List[Di
         return []
 
 def get_dependabot_prs(repo_full_name: str, github_client: Github) -> List[Dict[str, Any]]:
-    """Get all Dependabot PRs open for more than 1 hour for a repository."""
+    """Get all Dependabot PRs open for more than 30 minutes for a repository."""
     try:
         repo = github_client.get_repo(repo_full_name)
         pulls = repo.get_pulls(state='open', sort='created', direction='desc')
         
         dependabot_prs = []
-        one_hour_ago = datetime.now(timezone.utc) - timedelta(minutes=30)
+        half_an_hour_ago = datetime.now(timezone.utc) - timedelta(minutes=30)
         
         for pr in pulls:
             # Check if PR is from Dependabot
@@ -91,9 +91,9 @@ def get_dependabot_prs(repo_full_name: str, github_client: Github) -> List[Dict[
                 update_type = parse_version_change(pr.title)
                 
                 # Include PR if EITHER condition is met:
-                # 1. PR is older than 1 hour, OR
+                # 1. PR is older than 30 minutes, OR
                 # 2. PR is a major update (regardless of age)
-                is_old_enough = pr.created_at < one_hour_ago
+                is_old_enough = pr.created_at < half_an_hour_ago
                 is_major_update = update_type == "Major"
                 
                 if is_old_enough or is_major_update:
@@ -122,7 +122,7 @@ def generate_email_body(repo_data: Dict[str, Dict[str, Any]]) -> str:
         <html>
         <body>
             <h2>Dependabot Weekly Report</h2>
-            <p>No Dependabot alerts or PRs (open for more than 1 hour) across monitored repositories.</p>
+            <p>No Dependabot alerts or PRs (open for more than 30 minutes) across monitored repositories.</p>
             <p><em>Report generated on {}</em></p>
         </body>
         </html>
