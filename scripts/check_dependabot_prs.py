@@ -50,7 +50,7 @@ def parse_version_change(pr_title: str) -> str:
     
     return "Unknown"
 
-# TODO: didn't receive the alert for map, just PR
+# TODO: seem to get one or the other?
 def get_dependabot_alerts(repo_full_name: str, github_client: Github) -> List[Dict[str, Any]]:
     """Get all open Dependabot security alerts for a repository."""
     try:
@@ -83,14 +83,20 @@ def get_dependabot_prs(repo_full_name: str, github_client: Github) -> List[Dict[
         pulls = repo.get_pulls(state='open', sort='created', direction='desc')
         
         dependabot_prs = []
-        one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
+        one_hour_ago = datetime.now(timezone.utc) - timedelta(minutes=30)
         
         for pr in pulls:
             # Check if PR is from Dependabot
             if pr.user.login in ['dependabot[bot]', 'dependabot-preview[bot]']:
-                # Check if PR is older than 1 hour
-                if pr.created_at < one_hour_ago:
-                    update_type = parse_version_change(pr.title)
+                update_type = parse_version_change(pr.title)
+                
+                # Include PR if EITHER condition is met:
+                # 1. PR is older than 1 hour, OR
+                # 2. PR is a major update (regardless of age)
+                is_old_enough = pr.created_at < one_hour_ago
+                is_major_update = update_type == "Major"
+                
+                if is_old_enough or is_major_update:
                     dependabot_prs.append({
                         'title': pr.title,
                         'url': pr.html_url,

@@ -70,31 +70,45 @@ class TestLoadRepositories:
 class TestGetDependabotPRs:
     """Unit tests for fetching Dependabot PRs."""
     
-    def test_filters_old_prs_only(self):
+    def test_filters_old_prs_or_major_updates(self):
         # Mock GitHub objects
         mock_github = Mock()
         mock_repo = Mock()
         mock_github.get_repo.return_value = mock_repo
         
         # Create mock PRs
-        old_pr = Mock()
-        old_pr.user.login = "dependabot[bot]"
-        old_pr.created_at = datetime.now(timezone.utc) - timedelta(hours=2)
-        old_pr.title = "Bump package from 1.0.0 to 1.0.1"
-        old_pr.html_url = "https://github.com/owner/repo/pull/1"
-        old_pr.number = 1
+        old_patch_pr = Mock()
+        old_patch_pr.user.login = "dependabot[bot]"
+        old_patch_pr.created_at = datetime.now(timezone.utc) - timedelta(hours=2)
+        old_patch_pr.title = "Bump package from 1.0.0 to 1.0.1"
+        old_patch_pr.html_url = "https://github.com/owner/repo/pull/1"
+        old_patch_pr.number = 1
         
-        recent_pr = Mock()
-        recent_pr.user.login = "dependabot[bot]"
-        recent_pr.created_at = datetime.now(timezone.utc) - timedelta(minutes=30)
-        recent_pr.title = "Bump package from 1.0.0 to 1.0.1"
+        recent_major_pr = Mock()
+        recent_major_pr.user.login = "dependabot[bot]"
+        recent_major_pr.created_at = datetime.now(timezone.utc) - timedelta(minutes=15)
+        recent_major_pr.title = "Bump package from 1.0.0 to 2.0.0"
+        recent_major_pr.html_url = "https://github.com/owner/repo/pull/2"
+        recent_major_pr.number = 2
         
-        mock_repo.get_pulls.return_value = [old_pr, recent_pr]
+        recent_patch_pr = Mock()
+        recent_patch_pr.user.login = "dependabot[bot]"
+        recent_patch_pr.created_at = datetime.now(timezone.utc) - timedelta(minutes=15)
+        recent_patch_pr.title = "Bump package from 1.0.0 to 1.0.1"
+        recent_patch_pr.html_url = "https://github.com/owner/repo/pull/3"
+        recent_patch_pr.number = 3
+        
+        mock_repo.get_pulls.return_value = [old_patch_pr, recent_major_pr, recent_patch_pr]
         
         prs = get_dependabot_prs("owner/repo", mock_github)
         
-        assert len(prs) == 1
-        assert prs[0]['number'] == 1
+        # Should include: old patch PR (>1hr) and recent major PR
+        # Should exclude: recent patch PR (<1hr and not major)
+        assert len(prs) == 2
+        pr_numbers = [pr['number'] for pr in prs]
+        assert 1 in pr_numbers  # old patch
+        assert 2 in pr_numbers  # recent major
+        assert 3 not in pr_numbers  # recent patch (excluded)
     
     def test_filters_non_dependabot_prs(self):
         mock_github = Mock()
