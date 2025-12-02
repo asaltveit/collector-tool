@@ -50,7 +50,6 @@ def parse_version_change(pr_title: str) -> str:
     
     return "Unknown"
 
-# TODO: seem to get one or the other?
 def get_dependabot_alerts(repo_full_name: str, github_client: Github) -> List[Dict[str, Any]]:
     """Get all open Dependabot security alerts for a repository."""
     try:
@@ -127,7 +126,7 @@ def generate_email_body(repo_data: Dict[str, Dict[str, Any]]) -> str:
         </body>
         </html>
         """.format(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC'))
-    #  margin-top: 25px; for h3
+    #  Originally, margin-top: 25px; for h3
     html = """
     <html>
     <head>
@@ -135,7 +134,7 @@ def generate_email_body(repo_data: Dict[str, Dict[str, Any]]) -> str:
             body { font-family: Arial, sans-serif; margin: 20px; }
             h2 { color: #24292e; }
             h3 { color: #24292e; }
-            h4 { color: #586069; margin-top: 15px; margin-bottom: 10px; }
+            h4 { color: #586069; margin-top: 10px; margin-bottom: 10px; }
             .repo-section { margin-bottom: 30px; border: 1px solid #e1e4e8; padding: 15px; border-radius: 6px; }
             .alert-item { 
                 margin: 10px 0; 
