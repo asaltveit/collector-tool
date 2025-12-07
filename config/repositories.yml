@@ -1,6 +1,7 @@
 repositories:
   - asaltveit/asaltveit.github.io
   - asaltveit/Flipbook
+  - asaltveit/password-generator-chrome-extension
   - asaltveit/collector-tool
   - asaltveit/ROTAS-squares-map
   - asaltveit/ROTAS-Map-monitor
