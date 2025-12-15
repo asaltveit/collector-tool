@@ -34,7 +34,7 @@ jobs:
 
       - name: Upload report (optional)
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: dependabot-report
           path: dependabot_report.html
