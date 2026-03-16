@@ -1,6 +1,7 @@
 repositories:
   - asaltveit/asaltveit.github.io
   - asaltveit/map-searcher
+  - asaltveit/rp1-trees
   - asaltveit/Flipbook
   - asaltveit/password-generator-chrome-extension
   - asaltveit/collector-tool
